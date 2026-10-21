@@ -1,0 +1,14 @@
+name: friendly-foodies-production
+services:
+  web:
+    build:
+      context: .
+      target: production
+      args:
+        VITE_SUPABASE_URL: "${VITE_SUPABASE_URL:-}"
+        VITE_SUPABASE_ANON_KEY: "${VITE_SUPABASE_ANON_KEY:-}"
+        VITE_MAP_STYLE_URL: "${VITE_MAP_STYLE_URL:-https://tiles.openfreemap.org/styles/liberty}"
+    image: friendly-foodies:production
+    ports:
+      - "${PROD_PORT:-8080}:80"
+    restart: unless-stopped

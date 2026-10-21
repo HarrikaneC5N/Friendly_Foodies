@@ -1,64 +1,111 @@
-# AGENTS.md — Friendly Foodies
+# AGENTS.md — Friendly Foodies (Codex)
 
-## Mission
-Tu es Codex, développeur de Friendly Foodies : **véritable application sociale de découverte culinaire fondée sur une carte 2D immersive**, mobile-first, accessible dans le navigateur et installable en PWA. Ce n'est pas une démo de portfolio. Préserver strictement le cahier des charges V1 approuvé et la direction Figma.
+> Instructions applicables à tout le dépôt. Lire ce document **avant chaque tâche** et appliquer les exigences ci-dessous. Le projet est un véritable produit grand public, pas une démo de portfolio.
 
-**Références (par priorité) :** décisions explicites du propriétaire > cahier des charges V1 validé > ce fichier > maquettes Figma > code starter. Si une maquette comporte un élément non validé par le cahier des charges, ne l'implémente pas automatiquement. Documenter et faire arbitrer les ambiguïtés métier ; ne rien inventer silencieusement.
+## 1. Références et ordre de priorité
 
-Maquettes V1 (desktop/mobile) : https://www.figma.com/design/7CNt12jxJjlfXk7R5i8dHP/Friendly-Foodies?node-id=16-2
+1. **Cahier des charges V1 validé** : `docs/Friendly_Foodies_Cahier_des_charges_V1.docx` (si présent dans le dépôt). Il fait foi pour le métier, la vie privée, les parcours et les critères de recette R01–R16.
+2. **Décisions ultérieures explicites du propriétaire du projet**, si elles précisent ou modifient le cahier des charges.
+3. **Ce fichier `AGENTS.md`** : garde-fous d'implémentation.
+4. **Maquettes Figma V1** : référence de design et d'ergonomie (non source de nouvelles fonctionnalités métier). Voir https://www.figma.com/design/7CNt12jxJjlfXk7R5i8dHP/Friendly-Foodies?node-id=16-2
+5. `README.md`, code et migrations : état de l'implémentation, pas une preuve qu'une fonctionnalité est terminée.
 
-## Stack et direction artistique
-- React 19, TypeScript strict, Vite, PWA avec `vite-plugin-pwa`, CSS responsive, icônes `lucide-react`.
-- Supabase Auth, PostgreSQL/PostGIS, Supabase Storage ; politiques RLS **obligatoires**.
-- MapLibre GL JS pour la carte 2D ; choix définitif du fond de carte, coûts, quotas, licences et attribution à vérifier.
-- Design Figma : fond crème `#FAF5ED`, vert profond `#193F33`, vert `#317967`, accent corail `#F16E51`, composants arrondis, carte centrale esthétique. Desktop et mobile cohérents.
-- Objectif de départ **0 €** dans les limites des offres gratuites ; jamais de dépendance payante sans accord.
-- UI en français ; types, fonctions et variables en anglais. Composants accessibles clavier/lecteur d'écran, états chargement, erreur et vide.
+Quand les maquettes comportent un contrôle supplémentaire non prévu au cahier des charges (ex. filtre « Cuisine »), **respecter le cahier des charges** : ne pas introduire la fonctionnalité sans validation. Si une règle métier manque ou est « à arbitrer », proposer les options et demander une décision plutôt que l'inventer.
 
-## Règles produit V1 non négociables
-### Carte et établissements
-- Accueil **map-first**, pas de feed Instagram. Deux modes : **Mes amis** (posts accessibles des amis réciproques) et **Découvrir** (posts PUBLICS visibles aussi aux visiteurs sans compte).
-- Un marqueur par établissement regroupant toutes les visites ; en mode amis avatar d'un ami + badge « +N » ; en Découvrir marqueur neutre de lieu, pas d'avatar arbitraire.
-- Taper le marqueur : aperçu photo/grade puis fiche du lieu. Afficher le grade/résumé global **avant** les posts individuels.
-- Recherche d'établissement ; filtres découverte V1 **exactement deux** : distance précise en km et grade global **minimum** (« au moins A »). **Pas de filtre catégorie/cuisine** dans la V1, même s'il apparaît dans un ancien prototype graphique.
-- Plusieurs catégories visibles par établissement, avec catégorie « Autre » et libellé personnalisé attaché uniquement au lieu. Établissements de tous genres culinaires.
-- Ajouter un lieu par recherche ou en déposant une épingle, avec suggestions anti-doublons. Si le GPS est refusé, proposer un emplacement choisi ou le centre de carte. Ne pas supposer Paris hors données de démo.
+## 2. Mission produit
 
-### Expériences et grades
-- Une expérience = un post lié à un lieu et un auteur ; **5 photos maximum**, optimisées/compressées, texte bref, note C/B/A/S.
-- Grades : **C décevant, B correct, A excellent, S exceptionnel/mémorable**. Correspondance numérique et arrondi **à arbitrer** (le starter utilise provisoirement C=1/B=2/A=3/S=4).
-- Date de visite **facultative** : absente, jour précis ou mois/année seulement ; horodatage de publication distinct.
-- Visibilité « **Amis uniquement** » sélectionnée par défaut ; « Public » facultatif. Le membre peut modifier après publication sa visibilité, son texte, ses photos, sa note et sa date ; plusieurs visites au même lieu sont distinctes.
-- Grade de lieu = **moyenne des moyennes personnelles par auteur** : chaque auteur contribue une seule moyenne quel que soit le nombre de visites. Les données publiques doivent exclure tout contenu privé non autorisé. Détails d'affichage et de visibilité de l'agrégat à confirmer.
+Friendly Foodies est une **application web/PWA mobile-first de découverte d'expériences culinaires autour d'une carte interactive**, utilisable aussi sur ordinateur. Style inspiré des carnets de voyages cartographiques, expérience immersive, simple et chaleureuse. Pas de feed social prioritaire.
 
-### Utilisateurs et social
-- Google, Apple, e-mail **sans mot de passe** vérifié par OTP/lien. L'exploration des publications et profils PUBLICS reste accessible aux invités.
-- Pseudonyme unique obligatoire, avatar facultatif, autocomplétion des @pseudos, changement **une fois tous les 21 jours** contrôlé côté serveur.
-- Amis **réciproques** : demande, acceptation/refus, retrait silencieux, blocage. Une demande en attente ne donne aucun droit de lecture du privé.
-- Deux réactions seulement : « Je valide » et « Pas pour moi ». **Pas de commentaires, messages privés, feed social traditionnel** dans la V1.
-- Partage externe par lien/natif ; un lien partagé ne contourne **jamais** la confidentialité.
-- Notifications **uniquement** demande d'ami reçue et réaction sur une publication ; aucune notification de nouvelle publication ni retrait d'ami.
-- Signalement pour toute personne pouvant consulter le contenu (y compris visiteur anonyme pour contenu public) avec protections anti-abus ; **modération humaine uniquement** et journal admin. Suppression de compte avec confirmation et effacement données/médias conforme aux obligations applicables.
+**Direction artistique validée :** crème `#FAF5ED`, vert profond `#193F33`, vert `#317967`, corail `#F16E51`, cartes claires, arrondis, photos gourmandes et fond de carte 2D illustré soigné. Préserver les proportions et comportements responsive des maquettes. La carte doit rester la vedette de l'accueil.
 
-## Sécurité, vie privée et qualité
-- RLS sur chaque table Supabase ; jamais de confiance dans un simple filtrage JS. Tester anonyme, auteur, non-ami, demande en attente, ami accepté, ami retiré, utilisateur bloqué et admin.
-- Assurer l'inaccessibilité des posts privés via API, RPC, previews, agrégats, URL directes ou photos Storage. Les calculs publics n'utilisent que les contenus publics. Attention aux inférences par marqueurs et compteurs.
-- Validation côté serveur : photos (nombre/type/taille), note, date, propriétaire, pseudo/cooldown, réactions, édition, rate limiting et abus sur demandes/signalements.
-- Ne jamais mettre `service_role`, tokens, secrets ou données privées dans le front, les logs, la documentation ou les commits. Seuls URL Supabase et `anon/publishable key` peuvent être exposés dans `VITE_*` avec RLS. Ne jamais commiter `.env.local`, `node_modules`, `dist`, photos privées ou dumps.
-- Pas de migration destructive, élargissement de politiques d'accès, déploiement public ou suppression de données sans revue et accord.
-- Respecter RGPD, licences des tuiles, SEO de base pour les pages publiques, performances de carte (zone visible, clustering si nécessaire), photos chargées à la demande et accessibilité.
+**Contraintes :** viser un budget initial de **0 €**, sous réserve des quotas/conditions d'hébergement, de stockage et de tuiles. Aucune dépendance payante ni service à carte bancaire imposée sans accord. Respecter licences et attributions de la cartographie.
 
-## État actuel et ordre de livraison
-Le starter initial (s'il a été importé) est une **démo** cartographique à Paris avec lieux/avis fictifs ; les intégrations réelles de publications, amis, réactions, notifications, signalement, admin et suppression de compte ne sont **pas terminées**. Ne jamais marquer une fonctionnalité livrée sur la seule présence d'une maquette ou table SQL.
+## 3. Stack et conventions
 
-Étapes conseillées : (1) installer et valider le starter, auditer sécurité SQL et RLS ; (2) authentification et profils/handles ; (3) lieux et carte alimentés par Supabase ; (4) publications/Photos Storage et édition ; (5) amis, blocage et mode « Mes amis » ; (6) réactions, notifications, liens, signalements/admin ; (7) suppression de compte, tests R01–R16, performances et mise en ligne.
+- Front : **React 19 + TypeScript strict + Vite**, PWA `vite-plugin-pwa`, CSS actuel ; réutiliser les composants et styles existants. `lucide-react` pour les icônes.
+- Carte : **MapLibre GL JS** et style configurable ; fournisseur de tuiles de production **à arbitrer** (OpenFreeMap = prototype uniquement, vérifier usage/quotas/attribution).
+- Backend : **Supabase Auth + PostgreSQL/PostGIS + Storage**, RLS et contrôles d'accès **côté serveur**.
+- Séparer les modules : composants UI (`src/components`), logique métier testable (`src/lib`), appels backend (`src/lib` ou `src/services`), données de démo clairement isolées (`src/data/demo.ts`), migrations versionnées (`supabase/migrations`).
+- Pas de `any` implicite, pas d'API fictive présentée comme opérationnelle. UI en **français** ; fonctions, types et variables en anglais, noms explicites.
+- Privilégier des évolutions limitées, lisibles et testables. Préserver les tests existants ; en ajouter pour tout changement de logique métier, de visibilité ou de calcul de grades.
+- Ne jamais insérer de clés de production dans le code, les tests ou le dépôt. Les variables publiques `VITE_*` ne doivent contenir **aucun secret** : seules URL et clé Supabase *anon/publishable* sont admises côté client. Jamais de `service_role` dans React.
 
-## Workflow Codex à suivre pour chaque tâche
-1. Lire `AGENTS.md`, `README.md`, les migrations et la partie pertinente du cahier des charges ; identifier les décisions non prises.
-2. Annoncer en français le périmètre exact, les critères d'acceptation et risques de confidentialité ; privilégier un incrément vertical petit et testable.
-3. Implémenter sans régression métier ni divergence graphique, avec états responsive et tests adaptés. Documenter toute migration et politique RLS.
-4. Lancer si possible `npm run typecheck`, `npm run test`, `npm run build`. Distinguer tests effectivement passés de vérifications non réalisées.
-5. En fin de tâche fournir : fichiers modifiés, comportements **réellement opérationnels**, résultats des tests, risques/limites, arbitrages nécessaires et prochaine étape. N'invente jamais une réussite.
-6. Commits ciblés, branches `feat/...` ou `fix/...`, PR claires. Garder les données de démonstration explicitement fictives.
+## 4. Contrat fonctionnel V1 — ne pas déformer
 
-**V1 prête = scénarios de recette R01–R16 passés, confidentialité vérifiée, suppression du compte fonctionnelle et licences/coûts validés.**
+### Carte et découverte
+
+- Deux modes : **« Mes amis »** (visites de ses amis réciproques, uniquement si autorisées) et **« Découvrir »** (toutes les expériences **publiques** de la communauté, visibles même sans connexion).
+- Une **seule épingle par établissement**, quel que soit le nombre de posts. En mode amis : avatar d'un ami et `+N` pour les autres amis ; en mode Découvrir : repère neutre représentant **le lieu**, pas un utilisateur arbitraire.
+- Au clic : aperçu photo/grade, puis fiche d'établissement. Le **résumé et grade global du lieu apparaissent en premier**, ensuite les publications. Plusieurs visites par un même auteur sont possibles et restent distinctes.
+- Les **seuls filtres V1** sont **la distance exacte en kilomètres** et **le grade global minimum** (« au moins A », jamais égalité stricte). Recherche textuelle de lieux autorisée. **Aucun filtre catégorie/cuisine en V1**.
+- Les catégories se voient sur les fiches : restaurants, cafés, boulangeries, pâtisseries, bars, street food, food trucks, marchés, etc. Plusieurs catégories par lieu ; « Autre » est un libellé personnalisé **local au lieu**, sans modifier la liste officielle.
+- Localisation refusée ou indisponible : prévoir une expérience de repli utile (zone choisie / centre de carte). Ne pas supposer l'utilisateur à Paris hors **mode démo**.
+- Création d'un lieu par recherche ou par point sur la carte, avec suggestions anti-doublons proches.
+
+### Publications / expériences
+
+- Un post = visite d'une personne dans un lieu, avec texte bref, grade et **0 à 5 photos** (compression/optimisation et stockage sécurisé).
+- Grades métier **C = décevant, B = correct, A = excellent, S = exceptionnel/mémorable**. La conversion C=1/B=2/A=3/S=4 et la règle d'arrondi actuelles sont **provisoires** tant que non validées ; conserver cette incertitude visible dans les choix techniques.
+- Date de visite **facultative** : aucune date, date exacte (jour) ou mois/année approximatif. `created_at` distinct, fiable, non confondu avec la date de visite.
+- Visibilité par défaut **« Amis uniquement »** ; option **« Public »**. L'utilisateur peut modifier a posteriori photos, texte, grade, date et visibilité ; plusieurs posts d'un même auteur sur un même lieu.
+- Calcul du grade d'un lieu en **deux étages** : moyenne des visites d'un **utilisateur** pour le lieu, puis moyenne des moyennes de chaque utilisateur. Chaque contributeur a le même poids, qu'il ait un ou dix posts. Définition des populations/visibilités incluses dans les agrégats **à arbitrer**, surtout pour ne jamais exposer de données privées.
+
+### Social et accès
+
+- Inscription/connexion : **Google, Apple, e-mail sans mot de passe avec vérification réelle** (code/lien). Un visiteur sans compte peut consulter la carte Découvrir, les établissements, posts et profils publics.
+- Pseudonyme **unique obligatoire**, avatar facultatif, recherche/autocomplétion en temps réel ; changement de pseudonyme au plus **une fois par 21 jours**, contrôlé par le serveur.
+- Amitié **réciproque sur invitation** : envoi, acceptation, refus, retrait **sans notification de retrait**, blocage. Une demande en attente **ne donne jamais** accès aux publications privées.
+- Réactions limitées à **« Je valide »** et **« Pas pour moi »**. **Aucun commentaire filaire, message privé ou feed façon Instagram** en V1.
+- Partage externe par lien ou fonction native ; **un lien vers un contenu privé n'accorde aucun droit d'accès**.
+- Notifications **uniquement** pour une demande d'ami reçue et une réaction sur sa publication. Pas de notification pour les nouveaux posts d'amis ni les suppressions d'amitié.
+- Signalements de contenus accessibles, y compris par un visiteur anonyme lorsqu'il voit un post public, via un mécanisme **avec protection anti-abus**. **Modération humaine uniquement**, avec interface admin minimale et journal d'actions.
+- Suppression de compte avec confirmation et effacement sécurisé des données et médias, selon politique documentée. Respecter les droits RGPD.
+
+## 5. Confidentialité et sécurité — bloquants
+
+- Appliquer **RLS à toutes les tables métier** avec politiques revues pour les rôles `anon` et `authenticated`. L'UI ou les filtres JS **ne constituent jamais une protection**.
+- Tester explicitement : visiteur non connecté, auteur, membre non ami, demande en attente, ami accepté, ami retiré, utilisateur bloqué, administrateur.
+- Protéger les posts privés, **leurs photos dans Storage**, URLs de partage, previews, résultats de recherche, RPC, comptes/agrégats et notifications. Ne pas construire de lien public permanent vers un objet privé.
+- Agrégats publics et markers Découvrir : **aucune déduction de posts/relations privés** via grades, compteurs, photos ou noms. En cas de doute, ne calculer qu'à partir des posts publics visibles et demander validation métier.
+- Valider côté serveur les limites (max. cinq photos, type/taille, grade, propriétaire, format de date, changement de pseudo, contrôle de réactions) et limiter les abus (rate-limit sur OTP, demandes, signalements, créations).
+- Éviter les données personnelles de démonstration réelles, les traceurs inutiles et les logs exposant des données privées. Jamais de contournement RLS avec une clé admin dans le navigateur.
+- Demander validation/revue avant toute migration destructive, permission élargie, suppression de données, mise en production ou modification de politique d'accès.
+
+## 6. État réel du starter (ne pas surpromettre)
+
+Le starter contient une **carte démo Paris avec établissements/avis fictifs**, une interface responsive, les filtres V1, la fiche lieu, un module Auth à connecter et une première migration SQL. Le README détaille l'existant.
+
+**Non livré pour l'instant :** chargement métier réel Supabase, création et édition persistantes de posts, upload de photos, gestion réelle des amis/blocages, notifications, réactions, signalements, admin, suppression du compte et parcours d'onboarding complet. Ne jamais marquer ces fonctions « terminées » parce que les maquettes les représentent ou qu'une table SQL existe.
+
+## 7. Méthode de travail attendue de Codex
+
+Avant de modifier : lire `AGENTS.md`, `README.md`, les fichiers concernés, la migration SQL et la partie du cahier des charges correspondant à la tâche. Expliquer en **français** ce qui sera développé, les hypothèses et tout arbitrage bloquant. Ne pas dériver vers des fonctionnalités hors V1.
+
+Pour chaque tâche :
+1. Définir **un incrément utilisable** et les critères d'acceptation, particulièrement les cas d'accès/erreur.
+2. Réaliser le changement avec composants réutilisables, UI responsive/accessible (clavier, lecteurs d'écran, alt, états vides/chargement/erreur).
+3. Prévoir les migrations/requêtes RLS associées et les tests de visibilité si la fonctionnalité touche la base.
+4. Exécuter si possible `npm run typecheck`, `npm run test`, `npm run build`. Distinguer tests exécutés et tests non exécutables ; ne jamais inventer un succès.
+5. En fin de tâche, résumer : fichiers modifiés, comportements réellement opérationnels, tests et résultats, limitations, décisions à valider, prochaine petite étape.
+
+Scripts : `npm install`, `npm run dev`, `npm run typecheck`, `npm run test`, `npm run build`.
+
+Préférer des commits ciblés, noms de branches explicites (`feat/...`, `fix/...`), PR avec description/test. Ne pas pousser de `.env.local`, `node_modules`, `dist`, dumps, médias privés ou clés. Garder la démo distincte du monde réel ; ne pas afficher comme authentiques des expériences fictives.
+
+## 8. Ordre de développement conseillé
+
+1. Stabiliser l'environnement local et les tests, auditer migration, RLS et gestion Auth/profils, fixer les arbitrages de sécurité.
+2. Brancher les véritables établissements et catégories, géolocalisation/recherche, carte à épingle unique et fiches publiques.
+3. Authentification réelle et pseudonymes, puis création/édition de publications et Storage privé/public sécurisé.
+4. Système d'amitié et blocage, carte amis et lecture strictement autorisée.
+5. Réactions, notifications limitées, partage profond, signalements et back-office humain.
+6. Suppression de compte/RGPD, performances, accessibilité, PWA, tests de recette R01–R16 et déploiement contrôlé.
+
+Le produit V1 n'est **pas terminé** avant réussite des scénarios de recette R01–R16 et validation de la confidentialité, du retrait de compte, des coûts et des licences cartographiques.
+
+## Docker (développement et production)
+- Développement : `docker compose up --build -d` ; serveur Vite à `http://localhost:5173`, source montée dans le conteneur, dépendances dans un volume nommé.
+- Tests : `docker compose exec web npm run typecheck`, `docker compose exec web npm test`, `docker compose exec web npm run build`.
+- Compilation/aperçu production : `docker compose -f compose.prod.yaml up --build -d`, Nginx sur `http://localhost:8080`.
+- Voir `docs/DOCKER.md` ; ne pas ajouter Postgres local redondant à Supabase CLI sans décision explicite. Ne jamais exposer de secrets `VITE_*` ou par `ARG` Docker.
+- Commiter `package-lock.json` après un `npm install` valide, et privilégier `npm ci`. Tant que l'environnement npm n'est pas accessible, ne prétendre ni que les images ont été construites ni que les tests ont réussi.

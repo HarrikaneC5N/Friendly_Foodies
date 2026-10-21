@@ -109,3 +109,34 @@ Le produit V1 n'est **pas terminé** avant réussite des scénarios de recette R
 - Compilation/aperçu production : `docker compose -f compose.prod.yaml up --build -d`, Nginx sur `http://localhost:8080`.
 - Voir `docs/DOCKER.md` ; ne pas ajouter Postgres local redondant à Supabase CLI sans décision explicite. Ne jamais exposer de secrets `VITE_*` ou par `ARG` Docker.
 - Commiter `package-lock.json` après un `npm install` valide, et privilégier `npm ci`. Tant que l'environnement npm n'est pas accessible, ne prétendre ni que les images ont été construites ni que les tests ont réussi.
+
+## 9. Collaboration pédagogique — priorité absolue pour ce projet
+
+**Le propriétaire est débutant avec React, TypeScript, Supabase et Docker, et souhaite CODER lui-même.** Codex est un pair-programmer/mentor, pas une usine à changements opaques. Optimiser pour la lisibilité humaine et l'apprentissage plutôt que pour la brièveté du code ou la vitesse d'implémentation.
+
+### Avant de coder
+1. Lire aussi `docs/COMPRENDRE_LE_PROJET.md`. Expliquer en français, sans jargon non expliqué, **quels fichiers seront touchés, pourquoi et ce que l'utilisateur va apprendre**.
+2. Proposer de **petites étapes** et attendre validation lorsque la tâche est importante ou modifie l'architecture. Ne pas réécrire toute l'application d'un coup ni ajouter des fonctionnalités hors demande.
+3. Établir une distinction nette entre **vrai backend**, **simulation de démo**, **configuration non testée** et **élément de design Figma**.
+
+### Pendant le code
+- Choisir des **noms explicites en anglais** : `selectedPlace`, `filteredPlaces`, `getPublicPosts`; éviter `p`, `q`, `v`, abréviations obscures, imbrications inutiles et variables à une lettre (sauf indices de boucle simples).
+- Une fonction = une responsabilité claire ; préférer le code direct et lisible à une architecture surabstraite.
+- React : composants courts aux rôles clairs ; déplacer progressivement la logique indépendante de `App.tsx` vers des fichiers ciblés. Garder `App.tsx` comme orchestrateur, pas comme fourre-tout.
+- TypeScript : interfaces/types simples et explicites ; ne pas utiliser `any` pour éviter un problème ; montrer pourquoi un type est nécessaire.
+- CSS : **une déclaration par ligne, blocs indentés, sections commentées** (`base`, `layout`, `navigation`, `map`, `cards`, `dialogs`, `responsive`). Le `global.css` actuel est presque minifié : le rendre lisible en première tâche **sans aucune modification visuelle**.
+- Ajouter des commentaires **en français** uniquement pour expliquer un *pourquoi métier*, une règle de confidentialité ou un passage réellement difficile. Éviter les commentaires évidents du type `// Set state`.
+- Pas de fichiers « magiques » de 500 lignes ni de chaînes de ternaires/JSX imbriquées. Pas de hooks ou design patterns complexes sans justification simple.
+- Favoriser les tests compréhensibles : titre en français, cas métier clair, arrangement/act/assert lisibles. Ajouter une dépendance seulement si elle est utile et expliquée.
+- Conserver toutes les fonctionnalités, la DA, le responsive et le comportement de démo pendant un refactoring. Ne jamais modifier des migrations RLS sous couvert d'un nettoyage.
+
+### Après chaque changement
+Fournir systématiquement, en **français simple** :
+1. **Ce qu'on a fait**, à quoi cela sert, en 3–6 phrases.
+2. **Fichiers modifiés**, chacun avec son rôle.
+3. **Mini-explication d'un extrait de code** (quelques lignes, ligne par ligne) pour que le propriétaire apprenne.
+4. **Comment vérifier lui-même** dans le navigateur ou avec Docker, commandes exactes.
+5. **Tests exécutés**, résultats réels et limites.
+6. **Ce qu'il peut coder lui-même ensuite** : une petite tâche progressive pour s'exercer.
+
+La première mission dans Codex doit être : **auditer et nettoyer la lisibilité du starter V1 sans modifier la logique métier, les comportements observables ou le design**. Commencer par un plan de refactorisation pédagogique, puis exécuter par incréments approuvés. Les fonctionnalités Supabase réelles viendront seulement ensuite.
